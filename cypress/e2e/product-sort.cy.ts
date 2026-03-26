@@ -19,14 +19,20 @@ describe('Product Sort/Filter the items', () => {
       cy.get('.inventory_item_name').first().should('contain', 'Sauce Labs Backpack')
     })
   
-    it('should sort products by Price (low to high)', () => { //เปลี่ยนฟิลเตอร์ราคาจากต่ำไปสูง 
-      cy.get('.product_sort_container').select('Price (low to high)')
-      cy.get('option').should('have.value', 'lohi') // ค่า value ต้องเป็น lohi
-      
+    it('should sort products by Price (low to high)', () => {
+      cy.url().should('include', '/inventory.html')
+      cy.get('.product_sort_container').as('sortSelect')
+      cy.get('@sortSelect').select('Price (low to high)')
+      cy.get('@sortSelect').should('have.value', 'lohi')
+
       cy.get('.inventory_item_price').then((prices) => {
-        const priceValues = [...prices].map(el => parseFloat(el.textContent?.replace('$', '') || '0'))
+        const priceValues = Cypress._.map(prices, (el) => {
+          const text = el.textContent ?? ''
+          return Number(text.replace('$', '').trim())
+        })
+
         const sortedPrices = [...priceValues].sort((a, b) => a - b)
-        expect(priceValues).to.deep.equal(sortedPrices)
+        expect(priceValues, 'products are sorted low to high by price').to.deep.equal(sortedPrices)
       })
     })
   })
