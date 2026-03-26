@@ -1,4 +1,4 @@
-describe('Product Sort/Filter', () => {
+describe('Product Sort/Filter the items', () => {
     beforeEach(() => {
       cy.visit('https://www.saucedemo.com')
       cy.get('[data-test="username"]').type('standard_user')
